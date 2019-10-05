@@ -10,6 +10,7 @@ Get-PSFConfig
 
 # Get a specific setting
 Get-PSFConfig -FullName 'DemoModule.Setting1'
+Set-PSFConfig -FullName 'DemoModule.Setting1' -Value 23
 
 # Define a set of them and persist them
 Set-PSFConfig -Module DemoModule -Name Setting2 -Value 24 -SimpleExport
@@ -81,6 +82,9 @@ Get-PSFConfig -FullName psframework.localization.language
 Set-PSFConfig -FullName psframework.localization.language -Value de-DE
 Write-PSFMessage -Level Host -String 'Example.Message' -ModuleName MyModule
 Set-PSFConfig -FullName psframework.localization.language -Value en-US
+Get-PSFConfig *localization*
+
+Get-PSFLoggingProvider
 
  #----------------------------------------------------------------------------# 
  #                               Tab Expansion                                # 
@@ -180,7 +184,7 @@ function Get-Computer
     }
 }
 
-"server1", "server2", "server3" | Get-Computer -LastOnline "-14d" # (Get-Date).AddDays(-14)
+"server1", "server2", "server3" | Get-Computer -LastOnline "-14 30md" # (Get-Date).AddDays(-14)
 
 # Extend it
 $obj = [PSCustomObject]@{
@@ -196,6 +200,7 @@ $obj = [PSCustomObject]@{
     Name = "Server"
     Latency = 'incredible'
 }
+$obj | Get-Member
 # 2) Tell the PSFramework what to do with it
 Register-PSFParameterClassMapping -ParameterClass Computer -TypeName 'DemoModule.Computer.Latency' -Properties Name
 # 3) Laugh in triumph
@@ -296,6 +301,7 @@ function Get-Alcohol
 
 Register-PSFTeppScriptblock -Name "alcohol" -ScriptBlock { 'Beer','Mead','Whiskey','Wine','Vodka','Rum (3y)', 'Rum (5y)', 'Rum (7y)' }
 Register-PSFTeppArgumentCompleter -Command Get-Alcohol -Parameter Type -Name alcohol
+Get-Alcohol -Type Mojito
 
  #----------------------------------------------------------------------------# 
  #                                Flow Control                                # 
@@ -450,6 +456,8 @@ Get-ChildItem | Select-Object Name, @{
 Get-ChildItem | Select-PSFObject Name, 'Length as Size'
 # Styling up the size
 Get-ChildItem | Select-PSFObject Name, 'Length as Size size KB:2:1'
+Get-ChildItem | Select-PSFObject Name, 'Length as Size to PSFSize'
+Get-ChildItem | Select-PSFObject Name, 'Length as Size to PSFSize' | Sort-Object Size
 
 Import-Csv "$filesRoot\..\files.csv" | Select-Object Name, Length | Sort-Object Length
 # Typecast
